@@ -310,21 +310,17 @@ node_t *rbtree_max(const rbtree *t) {
 // [이식] 
 // 빠진 노드를 하단 노드에 이식하는 과정임
 // 걍 쉽게 말해서 u자리에 v를 넣는 과정
-void rbtree_transplant(rbtree *t, node_t *u,node_t *v){
-  if(u->parent == t->nil){
-    //u가 루트인지 확인해봐
-    //맞으면 v를 루트로 바꾸삼
-    t->root = v; 
+void rbtree_transplant(rbtree *t, node_t * u, node_t * v) {
+  if (u->parent == t->nil) {
+    t->root = v;
   }
-  else if(u == u->parent->left){
-    //근데 루트 아니고 왼쪽에 있는 노드야
+  else if (u == u->parent->left) {
     u->parent->left = v;
-    //그 부모 노드를 v노드로 바꿔
   }
-  else{
-    //같은말임
+  else {
     u->parent->right = v;
   }
+  v->parent = u->parent;
 }
 
 void free_node(rbtree *t, node_t *x) {
@@ -444,4 +440,3 @@ int rbtree_to_array(const rbtree *t, key_t *arr, const size_t n) {
   // TODO: implement to_array
   return 0;
 }
-

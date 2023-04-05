@@ -86,8 +86,7 @@ static int comp(const void *p1, const void *p2) {
 
   const key_t *e1 = (const key_t *)p1;
   const key_t *e2 = (const key_t *)p2;
-  printf("%d\n",*e2);
-  
+
   if (*e1 < *e2) {
     return -1;
   } else if (*e1 > *e2) {
@@ -141,13 +140,18 @@ void test_to_array(rbtree *t, const key_t *arr, const size_t n) {
   insert_arr(t, arr, n);
   //배열이 돌면서 트리에 하나씩 넣어줌 rb트리 구조에 맞춰서 들어감
   qsort((void *)arr, n, sizeof(key_t), comp);
-  //파라메터 값으로 받은 arry sort해주는 함수임
-  //오름차순으로 정렬이 됨
+  // qsort(배열의 시작 주소, 배열 사이즈, 자료형 크기, 비교기준 함수)
+  // 파라메터 값으로 받은 arry sort해주는 함수임
+  // 오름차순으로 정렬이 됨
 
   key_t *res = calloc(n, sizeof(key_t));
+  // 트리 -> 배열로 바꾸기 위해선 새로운 공간 할당이 필요함
+
   rbtree_to_array(t, res, n);
   for (int i = 0; i < n; i++) {
+    // 정렬이 잘 됐는지  qsort로 정렬한 값과 비교
     assert(arr[i] == res[i]);
+    // 틀리면 에러 뱉어냄 
   }
   free(res);
 }
@@ -329,7 +333,6 @@ void test_find_erase(rbtree *t, const key_t *arr, const size_t n) {
 
   for (int i = 0; i < n; i++) {
     node_t *p = rbtree_find(t, arr[i]);
-    // printf("arr[%d] = %d\n", i, arr[i]);
     assert(p != NULL);
     assert(p->key == arr[i]);
     rbtree_erase(t, p);
@@ -379,16 +382,16 @@ void test_find_erase_rand(const size_t n, const unsigned int seed) {
 }
 
 int main(void) {
-  // test_init();
-  // test_insert_single(1024);
-  // test_find_single(512, 1024);
-  // // test_erase_root(128);
-  // test_find_erase_fixed();
-  // test_minmax_suite();
+  test_init();
+  test_insert_single(1024);
+  test_find_single(512, 1024);
+  test_erase_root(128);
+  test_find_erase_fixed();
+  test_minmax_suite();
   test_to_array_suite();
-  // test_distinct_values();
-  // test_duplicate_values();
-  // test_multi_instance();
-  // test_find_erase_rand(10000, 17);
+  test_distinct_values();
+  test_duplicate_values();
+  test_multi_instance();
+  test_find_erase_rand(10000, 17);
   printf("테스트 통과~~~~~~!\n");
 }

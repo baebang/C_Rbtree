@@ -35,7 +35,7 @@ void test_insert_single(const key_t key) {
   assert(p->right == NULL);
   assert(p->parent == NULL);
 #endif
-  // delete_rbtree(t);
+  delete_rbtree(t);
 }
 
 // find should return the node with the key or NULL if no such node exists
@@ -52,7 +52,7 @@ void test_find_single(const key_t key, const key_t wrong_key) {
   q = rbtree_find(t, wrong_key);
   assert(q == NULL);
 
-  // delete_rbtree(t);
+  delete_rbtree(t);
 }
 
 // erase should delete root node
@@ -80,8 +80,14 @@ static void insert_arr(rbtree *t, const key_t *arr, const size_t n) {
 }
 
 static int comp(const void *p1, const void *p2) {
+  // sort를 위한 비교군임 c언어의 경우 구조체도 sort할 수 있음
+  // 구조체의 sort기준에 대한 함수를 정의해야하는데
+  // 해당 부분에선 아래와 같이 수의 크기로 비교를 하고 있는 것임
+
   const key_t *e1 = (const key_t *)p1;
   const key_t *e2 = (const key_t *)p2;
+  printf("%d\n",*e2);
+  
   if (*e1 < *e2) {
     return -1;
   } else if (*e1 > *e2) {
@@ -133,7 +139,10 @@ void test_to_array(rbtree *t, const key_t *arr, const size_t n) {
   assert(t != NULL);
 
   insert_arr(t, arr, n);
+  //배열이 돌면서 트리에 하나씩 넣어줌 rb트리 구조에 맞춰서 들어감
   qsort((void *)arr, n, sizeof(key_t), comp);
+  //파라메터 값으로 받은 arry sort해주는 함수임
+  //오름차순으로 정렬이 됨
 
   key_t *res = calloc(n, sizeof(key_t));
   rbtree_to_array(t, res, n);
@@ -370,13 +379,13 @@ void test_find_erase_rand(const size_t n, const unsigned int seed) {
 }
 
 int main(void) {
-  test_init();
-  test_insert_single(1024);
-  test_find_single(512, 1024);
-  // test_erase_root(128);
+  // test_init();
+  // test_insert_single(1024);
+  // test_find_single(512, 1024);
+  // // test_erase_root(128);
   // test_find_erase_fixed();
   // test_minmax_suite();
-  // test_to_array_suite();
+  test_to_array_suite();
   // test_distinct_values();
   // test_duplicate_values();
   // test_multi_instance();

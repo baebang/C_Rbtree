@@ -65,8 +65,35 @@ void test_minmax_suite() {
   test_minmax(entries, n);
 }
 
+void test_to_array_suite() {
+  rbtree *t = new_rbtree();
+  assert(t != NULL);
+
+  key_t entries[] = {10, 5, 8, 34, 67, 23, 156, 24, 2, 12, 24, 36, 990, 25};
+  const size_t n = sizeof(entries) / sizeof(entries[0]);
+  test_to_array(t, entries, n);
+
+  delete_rbtree(t);
+}
+
+
+
+void test_to_array(rbtree *t, const key_t *arr, const size_t n) {
+  assert(t != NULL);
+
+  insert_arr(t, arr, n);
+  qsort((void *)arr, n, sizeof(key_t), comp);
+
+  key_t *res = calloc(n, sizeof(key_t));
+  rbtree_to_array(t, res, n);
+  for (int i = 0; i < n; i++) {
+    assert(arr[i] == res[i]);
+  }
+  free(res);
+}
+
 
 int main(int argc, char *argv[]) {
-    test_minmax_suite();
+    test_to_array_suite();
     
 }

@@ -126,11 +126,6 @@ void rbtree_insert_fixup(rbtree *t, node_t *z) {
 }
 
 // 기존 Binary Search Tree의 Insert에서 변형
-// 하지만 삽입할 자리를 찾는 과정은 동일하다. NULL이 nil 노드로 바뀐다는 점과, 새로 삽입할 노드는 항상 단말 노드가 되기 때문에 새로 삽입할 노드 z의 left, right가 NIL이 된다는 점이 다르다.
-// 또한 새로 삽입할 노드 z가 레드 블랙 트리의 색깔 특성을 위반시킬 수 있으므로 따로 함수(rbtree_insert_fixup)를 호출하여 보완해줄 필요가 있다.
-// insert하고자 하는 위치를 찾고자 최악의 경우 log n이 걸릴 수 있다.
-// 그리고 while이나 for문 안에서 fixup이 이루어지는 것이 아니라 그냥 삽입이 끝나고 재조정을 위해 1번 이루어진다.
-// 따라서 (log n)^2가 아니라 log n + log n = 2log n으로, 삽입의 시간 복잡도는 log n이다.
 
 node_t *rbtree_insert(rbtree *t, const key_t key) {
   // TODO: 노드 삽입할 위치 찾기
@@ -287,10 +282,38 @@ int rbtree_erase(rbtree *t, node_t *z) {
   return 0;
 }
 
+// [중위 순회]
+void inorder_rbtree_to_array(const rbtree *t, node_t *x, key_t *arr, int *idx, const size_t n) {
+  node_t *stack[n];
+  int top = 0;
+
+  while (x != t->nil || top > 0) {
+    while (x != t->nil) {
+      stack[top++] = x;
+      x = x->left;
+    }
+
+    x = stack[--top];
+
+    if (*idx < n) {
+      arr[(*idx)++] = x->key;
+    } else {
+      return;
+    }
+
+    x = x->right;
+  }
+}
+
 int rbtree_to_array(const rbtree *t, key_t *arr, const size_t n) {
+  node_t *x = t->root;
+  if (x == t->nil) {
+    return 0;
+  }
+  int cnt = 0;
+  int *idx = &cnt;
+  inorder_rbtree_to_array(t, x, arr, idx, n);
   
   // TODO: implement to_array
   return 0;
 }
-
-

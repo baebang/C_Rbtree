@@ -68,10 +68,8 @@ void left_rotation(rbtree * tree, node_t * x){
     x->parent = y;
 }
 
-void delete_rbtree(rbtree *t) {
-  // TODO: reclaim the tree nodes's memory
-  free(t);
-}
+
+
 
 void rbtree_insert_fixup(rbtree *t, node_t *z) {
   node_t *y;
@@ -141,6 +139,7 @@ node_t *rbtree_insert(rbtree *t, const key_t key) {
   node_t* newNode = (node_t*)malloc(sizeof(node_t));
   newNode->key = key;
   
+
   while(x != t->nil){ //descend until reaching the sentinel
     y = x;
     if (newNode->key < x->key){
@@ -149,9 +148,12 @@ node_t *rbtree_insert(rbtree *t, const key_t key) {
     else
       x = x->right;
   }
+ 
   
   newNode->parent = y; //found the location-insert "newNode->parent" with parent y 
+
   if (y == t->nil){
+  //처음 루트가 들어왔을때
     t->root = newNode; //tree T was empty
   }
   else if (newNode->key < y->key)
@@ -167,7 +169,7 @@ node_t *rbtree_insert(rbtree *t, const key_t key) {
   rbtree_insert_fixup(t, newNode);
   //밸런스 맞춰주기
   
-
+  
   return t->root;
 }
 
@@ -176,17 +178,20 @@ node_t *rbtree_find(const rbtree *t, const key_t key) {
   node_t* p =  t->root;
   int check = 0;
 
+
   while(check == 0){ 
     //p가 닐인지 부터 확인하기
     if (p == t->nil){
       return NULL;
     }
     if (p->key == key){
+
       check = 1;
       return p;
     }
     else if (p->key > key){
       p = p->left;
+
     }
     else if (p->key < key) {
       p = p->right;
@@ -199,22 +204,31 @@ node_t *rbtree_find(const rbtree *t, const key_t key) {
 }
 
 node_t *rbtree_min(const rbtree *t) {
-  printf("dddd");
-  // TODO: implement find
-  return t->root;
+  node_t *p = t->root;
+  while(p->left != t->nil){
+    p = p->left;
+    
+  }
+
+  return p;
 }
 
 node_t *rbtree_max(const rbtree *t) {
   // TODO: implement find
-  printf("max");
-  return t->root;
+   node_t *p = t->root;
+  while(p->right != t->nil){
+    p = p->right;
+    
+  }
+
+  return p;
 }
 
 // [이식] 
 // 빠진 노드를 하단 노드에 이식하는 과정임
 // 걍 쉽게 말해서 u자리에 v를 넣는 과정
 void rbtree_transplant(rbtree *t, node_t *u,node_t *v){
-  if(u->parent == t->nill){
+  if(u->parent == t->nil){
     //u가 루트인지 확인해봐
     //맞으면 v를 루트로 바꾸삼
     t->root = v; 
@@ -230,34 +244,44 @@ void rbtree_transplant(rbtree *t, node_t *u,node_t *v){
   }
 }
 
+void free_node(rbtree *t, node_t *x) {
+  // 후위 순회 방식으로 RB Tree 내의 노드 메모리 반환
+  if (x->left != t->nil) 
+    free_node(t, x->left);
+  if (x->right != t->nil)
+    free_node(t, x->right);
+  free(x);
+  x = NULL;
+}
+
 // [동적 메모리 할당 해제]
 // [동적 메모리 할당된 트리의 nil 노드와 트리의 메모리 할당 해제]
 void delete_rbtree(rbtree *t) {
-  postorder_delete_rbtree(t, t->root);
+  // TODO: reclaim the tree nodes's memory
+  if (t->root != t->nil)
+    free_node(t, t->root);
   free(t->nil);
   free(t);
-  // TODO: reclaim the tree nodes's memory
 }
 
-
 int rbtree_erase(rbtree *t, node_t *z) {
-  // TODO: implement erase
-  node_t *y= z; //지우는 값 
-  color_t y_origin_color = y->color; 
-  // 나중에 y의 color, 즉 우리가 삭제하고자 하는 노드에 들어갈(대체할), 실제로 삭제하는 노드의 색깔이다. 
-  // 이는 레드 블랙 트리의 삭제 원리에 따라 블랙일 경우 문제가 되기에 미리 저장해둔다. 
+  // // TODO: implement erase
+  // node_t *y= z; //지우는 값 
+  // color_t y_origin_color = y->color; 
+  // // 나중에 y의 color, 즉 우리가 삭제하고자 하는 노드에 들어갈(대체할), 실제로 삭제하는 노드의 색깔이다. 
+  // // 이는 레드 블랙 트리의 삭제 원리에 따라 블랙일 경우 문제가 되기에 미리 저장해둔다. 
 
-  if(z->left == t.nill){
-    x = a->right;
-    rbtree_transplant(t,z,z->right);
-  }
-  else if(z->right == t.nill){
-    x = z->left;
-    rbtree_transplant(t,z,z->left);
-  }
-  else{
-    y = rbtree_min(z->right);
-  }
+  // if(z->left == t->nil){
+  //   x = a->right;
+  //   rbtree_transplant(t,z,z->right);
+  // }
+  // else if(z->right == t->nil){
+  //   x = z->left;
+  //   rbtree_transplant(t,z,z->left);
+  // }
+  // else{
+  //   y = rbtree_min(z->right);
+  // }
 
 
   return 0;
